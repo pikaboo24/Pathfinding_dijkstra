@@ -1,0 +1,27 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+.gradle/
+.vs/
+ExportedObj/
+.consulo/
+*.apk
+*.aab
+*.unitypackage
+*.csproj
+*.sln
+*.user
+*.pidb
+*.pdb
+*.mdb
+*.opendb
+*.suo
+*.tmp
+*.booproj
+sysinfo.txt
+mono_crash.*
