@@ -18,7 +18,7 @@ public class CameraControl : MonoBehaviour
 
        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 
-        transform.position += input.normalized * panSpeed *Time.deltaTime;
+       // transform.position += input.normalized * panSpeed *Time.deltaTime;
 
         transform.position = new Vector3(
             Mathf.Clamp(transform.position.x, bounds.min.x, bounds.max.x),

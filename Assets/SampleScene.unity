@@ -745,9 +745,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc8297c33c88e7245abc9c1759e69108, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  map: {fileID: 458221919}
   floorTile: {fileID: 11400000, guid: d75e3e1c6559c0641a8aae1e1d03341b, type: 2}
-  mapSizeTiles: {x: 100, y: 100}
-  chanceToSpawnFloor: 0.75
+  mapSizeTiles: {x: 11, y: 11}
+  chanceToSpawnFloor: 0.31
   perlinScale: 0.1
 --- !u!483693784 &458221918
 TilemapRenderer:
