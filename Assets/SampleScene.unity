@@ -746,9 +746,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 458221919}
+  PlayerPrefab: {fileID: 647537455900883224, guid: 35bd0510f20b34d448db4ab00f96de83, type: 3}
   floorTile: {fileID: 11400000, guid: d75e3e1c6559c0641a8aae1e1d03341b, type: 2}
   mapSizeTiles: {x: 11, y: 11}
-  chanceToSpawnFloor: 0.31
+  chanceToSpawnFloor: 0.5
   perlinScale: 0.1
 --- !u!483693784 &458221918
 TilemapRenderer:
@@ -821,7 +822,7 @@ Tilemap:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 0, y: 0, z: 1}
-  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
+  m_TileAnchor: {x: 0, y: 0, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
     e00: 1
@@ -1297,7 +1298,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.75
+  m_Value: 0.56
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

@@ -2,11 +2,13 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 
 public class TilemapGameLevel : MonoBehaviour
 {
     //Tilemap representing the game world
-    [SerializeField]private Tilemap map;
+    [SerializeField] private Tilemap map;
+    public GameObject PlayerPrefab;
 
     //Tilebase
     [SerializeField]
@@ -21,12 +23,17 @@ public class TilemapGameLevel : MonoBehaviour
     public float perlinScale = 0.1f;
     private void Start()
     {
-        map = GetComponent<Tilemap>();
+        
 
 
         GenerateMap();
 
     }
+    private void Update()
+    {
+        DrawTileGraph();
+    }
+    
 
     public void SetChanceToSpawnFloor(float chance)
     {
@@ -38,23 +45,68 @@ public class TilemapGameLevel : MonoBehaviour
 
     public void GenerateMap()
     {
+        Debug.Log("generate map called" + map);
         map.ClearAllTiles();
+
+        GameObject thePlayer = GameObject.FindWithTag("Player");
+
+        if (thePlayer != null)
+        { 
+        
+          Destroy(thePlayer);
+        
+        
+        }
+        float randomSeedX = Random.Range(20f, 100f);
+        float randomSeedY = Random.Range(20f, 100f);
+     
         for (int x = 0; x < mapSizeTiles.x; x++)
         {
             for (int y = 0; y <= mapSizeTiles.y; y++)
             {
                 Vector3Int tilePos = new Vector3Int(x, y, 0);
-                if (Mathf.PerlinNoise(x * perlinScale, y * perlinScale) <= chanceToSpawnFloor)
+                float noiseValue = Mathf.PerlinNoise(x * perlinScale + randomSeedX, y * perlinScale + randomSeedY);
+                if (noiseValue <= chanceToSpawnFloor)
                 {
                     map.SetTile(tilePos, floorTile);
+                    Debug.Log($"Floor tile placed at: {tilePos}");
                 }
 
             }
 
         }
+        for(int x = 0; x < mapSizeTiles.x; x++)
+        {
+            for (int y = 0;y <= mapSizeTiles.y; y++)
+            {
+                if (IsTraversible(x, y))
+                {
+                    Vector3 spawnPos = GetTileCenter(x, y);
+                    GameObject newPlayer = Instantiate(PlayerPrefab, spawnPos, Quaternion.identity);
+                    Move moveScript = newPlayer.GetComponent<Move>();
+                    if (moveScript != null)
+                    {
+                        moveScript.level = GetComponent<TilemapGameLevel>();
+
+                    }
+                    else
+                    {
+                        Debug.LogError("Move.cs not found");
+                    }
+                        return;
+
+                }
+
+
+
+            }
+
+
+        }
+        Debug.LogError("No tile found for player spawn!");
 
     }
-
+  
     public bool IsTraversible(int x, int y)
     {
         TileBase tile = GetTile(x, y);
@@ -124,12 +176,13 @@ public class TilemapGameLevel : MonoBehaviour
 
                 Vector3Int tilePos = new Vector3Int(x, y, 0);
                 Vector3 center = GetTileCenter (x, y);
-                Gizmos.DrawSphere(center, 0.1f);
+                Debug.DrawRay(center + Vector3.up * 0.1f, Vector3.down * 0.2f, Color.green);
+                Debug.DrawRay(center + Vector3.left * 0.1f, Vector3.right * 0.2f, Color.green);
 
                 foreach(Vector3Int neighbour in GetTraversibleNeighbours(tilePos))
                 {
                     Vector3 neighbourCenter = GetTileCenter(neighbour.x,neighbour.y);
-                    Gizmos.DrawLine(center, neighbourCenter);
+                    Debug.DrawLine(center, neighbourCenter , Color.red);
                 }
             }
 
@@ -139,6 +192,13 @@ public class TilemapGameLevel : MonoBehaviour
 
 
     }
+   
+    
+    
+    
+  
+    
+    
 
 
 
