@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine.UIElements;
+
 
 
 public class Pathfinder : MonoBehaviour
@@ -199,8 +201,66 @@ public class Pathfinder : MonoBehaviour
 
         }
 
+      
+
     }
 
-    
+    void OnDrawGizmos()
+    {
+        if (level == null || nodes == null) return;
+
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 24;
+        style.fontStyle = FontStyle.Bold;
+
+        Vector3 startWorld = level.GetTileCenter(start.x, start.y);
+        Vector3 endWorld = level.GetTileCenter(end.x, end.y);
+
+        style.normal.textColor = Color.green;
+        Handles.Label(startWorld + Vector3.up * 0.4f, "START", style);
+        DebugDrawing.DrawCircle(startWorld, Quaternion.AngleAxis(90, Vector3.forward), 0.8f, 8, Color.green, Time.deltaTime, false);
+
+        style.normal.textColor = Color.red;
+        Handles.Label(endWorld + Vector3.up * 0.4f, "END", style);
+        DebugDrawing.DrawCircle(endWorld, Quaternion.AngleAxis(90, Vector3.forward), 0.8f, 8, Color.red, Time.deltaTime, false);
+
+        Gizmos.color = Color.cyan;
+        foreach (var pair in nodes)
+        {
+            Vector2Int node = pair.Key;
+            Vector2Int from = pair.Value.previous;
+            float cost = pair.Value.gCost;
+
+            Vector3 nodePos = level.GetTileCenter(node.x, node.y);
+            Vector3 fromPos = level.GetTileCenter(from.x, from.y);
+
+            Vector3 dir = nodePos - fromPos;
+            float length = dir.magnitude;
+            Vector3 mid = (fromPos + nodePos) / 2f;
+            Vector3 thickness = Vector3.Cross(dir.normalized, Vector3.forward).normalized * 0.08f;
+
+
+            Gizmos.DrawCube(mid, new Vector3(length, thickness.magnitude * 2f, 0.01f));
+            Handles.Label(nodePos + Vector3.up * 0.2f, cost.ToString("F0"), style);
+        }
+
+        if (solution != null)
+        {
+            Gizmos.color = Color.magenta;
+            for (int i = 0; i < solution.Count - 1; i++)
+            {
+                Vector3 from = level.GetTileCenter(solution[i].x, solution[i].y);
+                Vector3 to = level.GetTileCenter(solution[i + 1].x, solution[i + 1].y);
+                
+                Vector3 dir = to - from;
+                float length = dir.magnitude;
+                Vector3 mid = (from + to) / 2f;
+                Vector3 thickness = Vector3.Cross(dir.normalized, Vector3.forward).normalized * 0.1f;
+
+                Gizmos.DrawCube(mid, new Vector3(length, thickness.magnitude * 2f, 0.01f));
+            }
+        }
+    }
+
 
 }
