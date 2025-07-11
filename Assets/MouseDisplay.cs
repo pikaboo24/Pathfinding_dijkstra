@@ -35,6 +35,48 @@ public class MouseDisplay : MonoBehaviour
             TextMeshGraphic.text = "empty";
         }
 
+<<<<<<< Updated upstream
         TextMeshGraphic.text += "\n" + tilePosX + "," + tilePosY; 
+=======
+        TextMeshGraphic.text += "\n" + tilePosX + "," + tilePosY;
+
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            FindAnyObjectByType<Pathfinder>().start = new Vector2Int(tilePosX, tilePosY);
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (tile != null)
+            {
+                FindAnyObjectByType<Pathfinder>().end = new Vector2Int(tilePosX,tilePosY);
+                FindAnyObjectByType<Pathfinder>().FindPathDebugging();
+
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            MonsterAgent monster = FindObjectOfType<MonsterAgent>();
+            Pathfinder pf = FindObjectOfType<Pathfinder>();
+
+            if (pf.solution != null && pf.solution.Count > 0)
+            {
+
+                monster.StartFollowingPath(pf.solution);
+
+            }
+
+            else 
+            {
+                Debug.LogWarning("No solution path for monster to follow");
+
+            }
+
+        }
+
+
+>>>>>>> Stashed changes
     }
 }
