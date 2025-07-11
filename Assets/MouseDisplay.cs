@@ -2,81 +2,68 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class MouseDisplay : MonoBehaviour
-{   
-    //The tilemap data to work on
+{
     private Tilemap map;
     public TMPro.TextMeshProUGUI TextMeshGraphic;
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         map = FindAnyObjectByType<Tilemap>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector2 pixelPos = Input.mousePosition;
-
         Vector3 worldSpacePositionOfMouse = Camera.main.ScreenToWorldPoint(pixelPos);
         worldSpacePositionOfMouse.z = 0;
 
         int tilePosX = (int)worldSpacePositionOfMouse.x;
         int tilePosY = (int)worldSpacePositionOfMouse.y;
-        Vector3Int tilePos = new Vector3Int(tilePosX, tilePosY, 0); 
+        Vector3Int tilePos = new Vector3Int(tilePosX, tilePosY, 0);
         transform.position = map.GetCellCenterWorld(tilePos);
 
         TileBase tile = map.GetTile(tilePos);
-        if(tile != null )
+        if (tile != null)
         {
             TextMeshGraphic.text = tile.name;
-        } else
+        }
+        else
         {
             TextMeshGraphic.text = "empty";
         }
 
-<<<<<<< Updated upstream
-        TextMeshGraphic.text += "\n" + tilePosX + "," + tilePosY; 
-=======
         TextMeshGraphic.text += "\n" + tilePosX + "," + tilePosY;
-
 
         if (Input.GetMouseButtonDown(1))
         {
             FindAnyObjectByType<Pathfinder>().start = new Vector2Int(tilePosX, tilePosY);
+            Debug.Log($"Start set to: {tilePosX},{tilePosY}");
         }
 
         if (Input.GetMouseButtonDown(0))
         {
             if (tile != null)
             {
-                FindAnyObjectByType<Pathfinder>().end = new Vector2Int(tilePosX,tilePosY);
+                FindAnyObjectByType<Pathfinder>().end = new Vector2Int(tilePosX, tilePosY);
                 FindAnyObjectByType<Pathfinder>().FindPathDebugging();
-
+                Debug.Log($"Goal set to: {tilePosX},{tilePosY}");
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            MonsterAgent monster = FindObjectOfType<MonsterAgent>();
-            Pathfinder pf = FindObjectOfType<Pathfinder>();
+            MonsterAgent monster = FindFirstObjectByType<MonsterAgent>();
+            Pathfinder pf = FindFirstObjectByType<Pathfinder>();
 
             if (pf.solution != null && pf.solution.Count > 0)
             {
-
                 monster.StartFollowingPath(pf.solution);
-
+                Debug.Log("Monster started following the path.");
             }
-
-            else 
+            else
             {
-                Debug.LogWarning("No solution path for monster to follow");
-
+                Debug.LogWarning("No solution path for Monster to follow!");
             }
-
         }
-
-
->>>>>>> Stashed changes
     }
 }
