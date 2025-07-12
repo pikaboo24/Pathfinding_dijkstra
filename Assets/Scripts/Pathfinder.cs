@@ -22,7 +22,7 @@ public class Pathfinder : MonoBehaviour
         }
     }
 
-    private TilemapGameLevel level;
+    public TilemapGameLevel level;
 
     public Vector2Int start;
     public Vector2Int end;
@@ -36,7 +36,17 @@ public class Pathfinder : MonoBehaviour
 
     private void Awake()
     {
-        level = GetComponent<TilemapGameLevel>();
+        if (level == null)
+        {
+            Debug.LogError("PathFinder: level is still null");
+
+
+        }
+        else 
+        {
+            Debug.Log("Pathfinder: level assigned");
+        }
+        //level = GetComponent<TilemapGameLevel>();
     }
 
     internal void FindPathDebugging()
@@ -173,6 +183,11 @@ public class Pathfinder : MonoBehaviour
 
     public void DijkstraIteration()
     {
+        if (level == null)
+        {
+            Debug.LogError("Pathfiner : level is null");
+            return;
+        }
         current = GetLowestCostInUnvisited().Item1;
 
         Debug.Log("Visiting: " + current + ", cost" + nodes[current].gCost);

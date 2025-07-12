@@ -25,7 +25,16 @@ public class MonsterAgent : MonoBehaviour
             Vector2Int playerTile = new Vector2Int(playerTile3D.x, playerTile3D.y);
 
             Pathfinder pf = FindFirstObjectByType<Pathfinder>();
-            pf.start = monsterTile;
+            if(pf == null)
+            {
+                Debug.LogError("MonsterAgent : pathfinder not found");
+
+            }
+            else
+            {
+                Debug.Log("Pathdiner found");
+            }
+                pf.start = monsterTile;
             pf.end = playerTile;
             yield return StartCoroutine(pf.DijkstraSearchCoroutine(monsterTile, playerTile));
 

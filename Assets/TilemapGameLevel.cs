@@ -6,7 +6,7 @@ using NUnit.Framework.Constraints;
 
 public class TilemapGameLevel : MonoBehaviour
 {
-    [SerializeField] public  Tilemap map;
+    [SerializeField] public Tilemap map;
     public GameObject PlayerPrefab;
     public GameObject MonsterPrefab;
     [SerializeField] TileBase floorTile;
@@ -31,20 +31,11 @@ public class TilemapGameLevel : MonoBehaviour
 
     public void GenerateMap()
     {
-        Debug.Log("generate map called" + map);
+        Debug.Log("generate map called " + map);
         map.ClearAllTiles();
 
         GameObject thePlayer = GameObject.FindWithTag("Player");
-        if (thePlayer != null)
-        {
-            Destroy(thePlayer);
-        }
-
         GameObject theMonster = GameObject.FindWithTag("Monster");
-        if (theMonster != null)
-        {
-            Destroy(theMonster);
-        }
 
         float randomSeedX = Random.Range(20f, 100f);
         float randomSeedY = Random.Range(20f, 100f);
@@ -58,7 +49,6 @@ public class TilemapGameLevel : MonoBehaviour
                 if (noiseValue <= chanceToSpawnFloor)
                 {
                     map.SetTile(tilePos, floorTile);
-                    Debug.Log($"Floor tile placed at: {tilePos}");
                 }
             }
         }
@@ -70,33 +60,42 @@ public class TilemapGameLevel : MonoBehaviour
                 if (IsTraversible(x, y))
                 {
                     Vector3 spawnPos = GetTileCenter(x, y);
+                    if (thePlayer == null)
+                    {
+                        thePlayer = Instantiate(PlayerPrefab, spawnPos, Quaternion.identity);
+                        thePlayer.tag = "Player";
+                    }
+                    else
+                    {
+                        thePlayer.transform.position = spawnPos;
+                    }
 
-                    GameObject newPlayer = Instantiate(PlayerPrefab, spawnPos, Quaternion.identity);
-                    Move moveScript = newPlayer.GetComponent<Move>();
+                    Move moveScript = thePlayer.GetComponent<Move>();
                     if (moveScript != null)
                     {
                         moveScript.level = GetComponent<TilemapGameLevel>();
                     }
+
+                    Vector3 monsterPos = GetTileCenter(Random.Range(0, mapSizeTiles.x), Random.Range(0, mapSizeTiles.y));
+                    while (!IsTraversible((int)monsterPos.x, (int)monsterPos.y))
+                    {
+                        monsterPos = GetTileCenter(Random.Range(0, mapSizeTiles.x), Random.Range(0, mapSizeTiles.y));
+                    }
+
+                    if (theMonster == null)
+                    {
+                        theMonster = Instantiate(MonsterPrefab, monsterPos, Quaternion.identity);
+                        theMonster.tag = "Monster";
+                    }
                     else
                     {
-                        Debug.LogError("Move.cs not found");
+                        theMonster.transform.position = monsterPos;
                     }
 
-                    Vector3 randomPos = GetTileCenter(Random.Range(0, mapSizeTiles.x), Random.Range(0, mapSizeTiles.y));
-                    while (!IsTraversible((int)randomPos.x, (int)randomPos.y))
-                    {
-                        randomPos = GetTileCenter(Random.Range(0, mapSizeTiles.x), Random.Range(0, mapSizeTiles.y));
-                    }
-
-                    GameObject newMonster = Instantiate(MonsterPrefab, randomPos, Quaternion.identity);
-                    MonsterAgent monsterScript = newMonster.GetComponent<MonsterAgent>();
+                    MonsterAgent monsterScript = theMonster.GetComponent<MonsterAgent>();
                     if (monsterScript != null)
                     {
                         monsterScript.level = GetComponent<TilemapGameLevel>();
-                    }
-                    else
-                    {
-                        Debug.LogError("MonsterAgent.cs not found on prefab!");
                     }
 
                     return;
@@ -138,10 +137,10 @@ public class TilemapGameLevel : MonoBehaviour
         List<Vector3Int> neighbours = new List<Vector3Int>();
         Vector3Int[] directions = new Vector3Int[]
         {
-           new Vector3Int(0, 1, 0),
-           new Vector3Int(0, -1, 0),
-           new Vector3Int(1, 0, 0),
-           new Vector3Int(-1, 0, 0)
+            new Vector3Int(0, 1, 0),
+            new Vector3Int(0, -1, 0),
+            new Vector3Int(1, 0, 0),
+            new Vector3Int(-1, 0, 0)
         };
 
         foreach (Vector3Int dir in directions)
